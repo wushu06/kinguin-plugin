@@ -1,26 +1,20 @@
 <?php
 namespace Inc\Data\Api;
+use Inc\Data\Api\PrepareForCron;
 
 class Cron
 {
     public function __construct()
     {
-
-
         add_filter('cron_schedules', array($this, 'hmu_cron_recurrence_interval') );
-        $cron_name = 'hmu_kenguin_stock';
-        if (!wp_next_scheduled($cron_name )) {
-            wp_schedule_event(time(), 'every_two_minute', $cron_name );
+        $stock_price = 'hmu_kenguin_stock_and_price';
+        if (!wp_next_scheduled($stock_price )) {
+            wp_schedule_event(time(), 'every_two_minute', $stock_price );
         }
+        add_action($stock_price , array($this,'hmu_kenguin_stock_function') );
 
-        add_action($cron_name , array($this,'hmu_kenguin_stock_function') );
-
-
-       // wp_clear_scheduled_hook( 'hmu-update-stock' );
-
-
+        // wp_clear_scheduled_hook( 'hmu-update-stock' );
     }
-
 
 
     function hmu_cron_recurrence_interval($schedules) {
@@ -49,8 +43,8 @@ class Cron
 
     function hmu_kenguin_stock_function()
     {
-
-
+        $prepare = new PrepareForCron();
+        $prepare->hmuCronUpdateStockAndPrice(10);
     }
 
 }

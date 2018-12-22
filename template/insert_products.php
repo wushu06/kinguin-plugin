@@ -1,23 +1,25 @@
 <?php
-use Inc\Data\Api\DisplayData;
-$insertData = new DisplayData();
+use Inc\Data\Api\Create;
+$create = new Create();
 
 ?>
-    <h1>All Porducts</h1>
+    <h1>Create products by range</h1>
 
     <form action="" method="post">
         <input class="hmu-btn hmu-primary" type="submit" name="insert_all_products" value="Insert Products">
-        <input name="limit" type="number" id="limit" size="30">
+        <input name="range" type="text" id="range" size="30" placeholder="Products range ie: 1,50">
     </form>
 
 <?php
 if( isset( $_POST['insert_all_products'] ) ) {
-    wp_mail('nourwushu@gmail.com', 'kenguin mail', 'kenguib');
-    if(isset($_POST['limit']) && !empty($_POST['limit'])) {
-        $limit = $_POST['limit'];
+    if(isset($_POST['range']) && !empty($_POST['range'])) {
+        $range = $_POST['range'];
     }else {
-        $limit =  1;
+        $range =  1;
     }
+    $range = explode(',', $range);
+
+
 
     $output ="<table class=\"widefat fixed\" cellspacing=\"0\">\n\n";
     $output .= "<thead>\n\n";
@@ -27,8 +29,10 @@ if( isset( $_POST['insert_all_products'] ) ) {
     $output .= "</thead>\n\n";
     $output .= "<tbody> \n";
     $output .= "<tr>\n";
-    foreach ($insertData->hmuInsertData($limit) as $msg) {
-        $output .= "<tr><td>".$msg."</td></tr>";
+    for ($x = $range[0]; $x <= $range[1]; $x++) {
+        foreach ($create->hmuInsertSingleData($x) as $msg) {
+            $output .= "<tr><td>".$msg."</td></tr>";
+        }
     }
     $output .= "</tr>\n";
     $output .= "</tbody> \n ";
@@ -36,7 +40,8 @@ if( isset( $_POST['insert_all_products'] ) ) {
 
     echo $output;
 
-    
+
+
 }
 
 ?>

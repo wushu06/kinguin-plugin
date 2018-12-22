@@ -24,6 +24,7 @@ class DisplayData
 
                 <tr>
                     <th> Count</th>
+                    <th> kinguinId</th>
                     <th> Name</th>
                     <th> Desc</th>
                     <th> Image</th>
@@ -37,7 +38,6 @@ class DisplayData
                     <th> regionalLimitations</th>
                     <th> regionId</th>
                     <th> activationDetails</th>
-                    <th> kinguinId</th>
                     <th> screenshots</th>
                     <th> videos</th>
                     <th> languages</th>
@@ -47,66 +47,82 @@ class DisplayData
                 </thead>
                 <tbody>
                 <?php
-
+                if(isset(json_decode($response)->results)):
                 foreach (json_decode($response)->results as $product ) {
-
-
 
                     ?>
                     <tr>
                         <td><?php echo $i; ?></td>
                         <?php
+                        echo '<td>'. $kinguinId = isset($product->kinguinId) ? $product->kinguinId : "" .'</td>';
+
                         echo '<td>'.$name = $product->name.'</td>';
-                        echo '<td>'. $desc = $product->description.'</td>';
+                        echo '<td>'. $desc = isset($product->description) ? $product->description : ""  .'</td>';
+                        if( isset($product->coverImage)):
                         echo '<td><img src="'. $image = $product->coverImage.'" width="100"/></td>';
+                        endif;
                         echo '<td>';
                         $developers = $product->developers;
+                        if( isset($developer)):
                         foreach ($developers as $developer) {
                             echo  $developer;
                         }
+                        endif;
                         echo '</td>';
                         echo '<td>';
                         $publishers = $product->publishers;
+                        if( isset($publishers)):
                         foreach ($publishers as $publisher) {
                             echo  $publisher;
                         }
+                        endif;
                         echo '</td>';
                         echo '<td>';
                         $genres = $product->genres;
+                        if( isset($genres)):
                         foreach ($genres as $genre) {
                             echo  $genre;
                         }
+                        endif;
                         echo '</td>';
-                        echo '<td>'. $platform = $product->platform.'</td>';
-                        echo '<td>'. $releaseDate = $product->releaseDate.'</td>';
+                        echo '<td>'. $platform =  isset($product->platform) ? $product->platform : "".'</td>';
+                        echo '<td>'. $releaseDate = isset($product->releaseDate) ? $product->releaseDate : "" .'</td>';
                       //  echo '<td>'. $is_instock = $product->stock.'</td>';
                         echo '<td>'. $qty = $product->qty.'</td>';
                         echo '<td>'. $price = $product->price.'</td>';
                         //echo '<td>'. $isPreorder = $product->isPreorder.'</td>';
-                        echo '<td>'. $regionalLimitations = $product->regionalLimitations.'</td>';
-                        echo '<td>'. $regionId = $product->regionId.'</td>';
-                        echo '<td>'. $activationDetails = $product->activationDetails.'</td>';
-                        echo '<td>'. $kinguinId = $product->kinguinId.'</td>';
+                        echo '<td>'. $regionalLimitations = isset($product->regionalLimitations) ? $product->regionalLimitations : "".'</td>';
+                        echo '<td>'. $regionId = isset($product->regionId) ? $product->regionId : "".'</td>';
+                        echo '<td>'. $activationDetails = isset($product->activationDetails) ? $product->activationDetails : "" .'</td>';
                         echo '<td>';
-                        $screenshots = $product->screenshots;
+
+                        if(isset($product->screenshots)):
+                            $screenshots = $product->screenshots;
                         foreach ($screenshots as $screenshot) {
                             echo  '<img src="'.$screenshot->url.'" width="50"/>';
                         }
+                        endif;
                         echo '</td>';
                         echo '<td>';
-                        $videos = $product->videos;
+
+                        if(isset($product->videos)):
+                            $videos = $product->videos;
                         foreach ($videos as $video) {
                             echo  $video->video_id;
                         }
+                        endif;
                         echo '</td>';
                         echo '<td>';
                         $languages = $product->languages;
+                        if(isset($languages)):
                         foreach ($languages as $language) {
                             echo  $language;
                         }
+                        endif;
                         echo '</td>';
                         echo '<td>';
                         $systemRequirements = $product->systemRequirements;
+                        if(isset($systemRequirements)):
                         foreach ($systemRequirements as $systemRequirement) {
                             echo  $system = $systemRequirement->system;
                             $requirements = $systemRequirement->requirement;
@@ -114,6 +130,7 @@ class DisplayData
                                 echo $requirement;
                             }
                         }
+                        endif;
                         echo '</td>';
 
 
@@ -125,6 +142,10 @@ class DisplayData
                    <?php
 
                 $i++; }
+                else:
+                    echo 'No result found';
+                endif;
+
             else:
                 echo '<p>No products found!</p>';
             endif;
@@ -136,171 +157,8 @@ class DisplayData
 
             </table>
         <?php
-
-
-
     }
 
-    function hmuInsertData($limit)
-    {
-
-        $con = new Connect();
-        global $wpdb;
-        $postdate = date("Y-m-d H:i:s");
-        $base = new BaseController();
-
-
-        // check if the post already exists
-        //$count = get_page_by_title($product_data['title'], OBJECT, 'product');
-
-
-
-        if( $response =  $con->hmuApiBasicConnection('GET', 'https://api2.kinguin.net/integration/v1/products?limit='.$limit)):
-            foreach (json_decode($response)->results as $product ) {
-                $name = $product->name;
-                $post_name = $base::hmuSeoUrl($name);
-                $desc = $product->description;
-                $image = $product->coverImage;
-                $developers = $product->developers;
-
-                $publishers = $product->publishers;
-
-                $genres = $product->genres;
-
-                $platform = $product->platform;
-                $releaseDate = $product->releaseDate;
-                $is_instock = $product->stock;
-                $qty = $product->qty;
-                $price = $product->price;
-                $isPreorder = $product->isPreorder;
-                $regionalLimitations = $product->regionalLimitations;
-                $regionId = $product->regionId;
-                $activationDetails = $product->activationDetails;
-                $kinguinId = $product->kinguinId;
-                $screenshots = $product->screenshots;
-
-                $videos = $product->videos;
-
-                $languages = $product->languages;
-
-                $systemRequirements = $product->systemRequirements;
-
-
-                /*
-                 * insert product
-                 */
-
-                $post_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_name = %s ", $post_name));
-
-                if ($post_id) {
-
-                    $wpdb->update(
-                        $wpdb->posts,
-                        array(
-                            'post_title' => $name,
-                            'post_name' => $post_name,
-                            'post_content'=> $desc,
-                            'post_status' => 'publish',
-                            'post_type' => 'product',
-                            'post_date' => $postdate
-                        ),
-                        array(
-                            'ID' => $post_id
-                        ),
-
-                        array(
-                            '%s',
-                            '%s',
-                            '%s',
-                            '%s',
-                            '%s',
-
-
-                        )
-                    );
-
-                    $msg[] = 'Product has been updated ID: '.$post_id. ' Title: '.$name;
-
-                }else{
-
-                   $wpdb->insert(
-                        $wpdb->posts,
-                            array(
-                                'post_title' => $name,
-                                'post_name' => $post_name,
-                                'post_content'=> $desc,
-                                'post_status' => 'publish',
-                                'post_type' => 'product',
-                                'post_date' => $postdate
-                            ),
-                            array(
-                                '%s',
-                                '%s',
-                                '%s',
-                                '%s',
-                                '%s',
-
-                            )
-                        );
-			         $post_id = $wpdb->insert_id;
-
-
-
-
-                    $msg[] = 'Porduct has been insert ID: '.$post_id. ' Title: '.$name;
-                }
-                if (!$post_id) // If there is no post id something has gone wrong so don't proceed
-                {
-                    $msg[] = 'Something went wrong! No post ID';
-                    return false;
-                }
-
-
-                $this->insertImage($image, $post_id);
-                $this->insertGalleryImages($screenshots, $post_id);
-                $this->insertStock($post_id, $qty);
-                foreach ($developers as $developer) {
-                    $this->insertTerms($post_id,'developers', $developer, 'product_cat');
-                }
-                foreach ($genres as $genre) {
-                    $this->insertTerms($post_id,'genres', $genre, 'product_cat');
-
-                }
-                foreach ($languages as $language) {
-                    $this->insertTerms($post_id,'languages', $language, 'product_cat');
-
-                }
-                $this->insertTerms($post_id,'platforms',   $platform, 'product_cat');
-
-
-                update_post_meta($post_id, '_visibility', 'visible'); // Set the product to visible, if not it won't show on the front end
-                update_post_meta($post_id, '_price', $price);
-                update_post_meta($post_id, '_regular_price', $price);
-                update_post_meta($post_id, '_sku', $regionId.'_'.$post_id);
-                foreach ($systemRequirements as $systemRequirement) {
-                    $system = $systemRequirement->system;
-                    $requirements = $systemRequirement->requirement;
-                    foreach ($requirements as $requirement){
-                        update_field('requirements', $requirement, $post_id);
-
-                    }
-                }
-                update_field('activation_details', $activationDetails, $post_id);
-                foreach ($videos as $video) {
-
-                    update_field('video', $video->video_id, $post_id);
-
-                }
-
-
-
-
-            }
-        else:
-            $msg[] = 'Something went wrong';
-        endif;
-        return $msg;
-    }
 
     public function insertStock($post_id, $qty)
     {

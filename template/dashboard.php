@@ -1,16 +1,9 @@
 <?php
 
-use Inc\Base\BaseController;
-$control = new BaseController();
-
-use Inc\Data\Api\DisplayData;
-$displayData = new DisplayData();
 
 use Inc\Data\InsertProducts;
 $insert_product = new InsertProducts();
 
-use Inc\Data\InsertStock;
-$insert_stock = new InsertStock();
 
 $option = get_option('hmu_api_basic');
 
@@ -95,6 +88,21 @@ $option = get_option('hmu_api_basic');
 
                 <?php include 'insert_products.php'; ?>
                 <hr>
+                <?php include 'batch_insert_products.php'; ?>
+                <hr>
+                <hr>
+                <?php include 'partials/insert_basics.php'; ?>
+                <hr>
+                <?php include 'partials/insert_stock_price.php'; ?>
+                <hr>
+                <?php include 'partials/insert_images.php'; ?>
+                <hr>
+                <?php include 'partials/insert_categories.php'; ?>
+                <hr>
+                <?php include 'partials/insert_infos.php'; ?>
+                <hr>
+                <?php include 'partials/insert_gallery.php'; ?>
+                <hr>
                 <h3>Website:</h3>
 
                 <table class="widefat fixed" cellspacing="0">
@@ -174,23 +182,7 @@ $option = get_option('hmu_api_basic');
 
 					echo 'Task has been deleted';
 
-					/*if ( $option && !empty($option) ) {
-						foreach ($option as $key => $value) {
-							$cron_name_row = $value['cron_name'];
-							$cron_name_nospace = preg_replace("/[\s_]/", "-", $cron_name_row);
-							$cron_name = 'hmu-api-' . $cron_name_nospace;
-							wp_clear_scheduled_hook($cron_name);
 
-							delete_option('hmu_api_cron');
-
-							add_option('hmu_api_cron', $default);
-							$output = get_option('hmu_api_cron');
-							$output = array();
-
-
-							echo 'Task has been deleted';
-						}
-					}*/
 				}
 
 

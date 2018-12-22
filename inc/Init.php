@@ -4,6 +4,7 @@ namespace Inc;
 
 use Inc\Pages\Admin;
 use Inc\Base\Enqueue;
+use Inc\Data\Api\Cron;
 
 
 final class Init {
@@ -13,7 +14,8 @@ final class Init {
 
         return [
             new Admin(),
-            new Enqueue()
+            new Enqueue(),
+            new Cron()
         ];
 
     }
