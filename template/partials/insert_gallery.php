@@ -3,7 +3,7 @@ use Inc\Data\Api\PrepareForCron;
 $insertGallery = new PrepareForCron();
 
 ?>
-    <h1>Insert product thumbnail</h1>
+    <h1>Insert product gallery</h1>
 
     <form action="" method="post">
         <input class="hmu-btn hmu-primary" type="submit" name="gallery_insert" value="Insert Gallery images">

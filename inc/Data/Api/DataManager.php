@@ -59,8 +59,9 @@ class DataManager
 
                )
            );
-           $msg[] = 'Product has been created ID: ' . $post_id . ' Title: ' . $name;
            $post_id = $wpdb->insert_id;
+           $msg[] = 'Product has been created ID: ' . $post_id . ' Title: ' . $name;
+
 
 
        }
@@ -71,9 +72,11 @@ class DataManager
 
     public function insertStockAndPrice($post_id, $qty, $price)
     {
+        $percent = 30;
+        $sale_price = ($price * $percent) / 100 + $price;
         update_post_meta($post_id, '_visibility', 'visible'); // Set the product to visible, if not it won't show on the front end
-        update_post_meta($post_id, '_price', $price);
-        update_post_meta($post_id, '_regular_price', $price);
+        update_post_meta($post_id, '_price', $sale_price);
+        update_post_meta($post_id, '_regular_price', $sale_price);
 
         if ($qty != 0) {
             update_post_meta($post_id, '_stock', $qty);
@@ -201,8 +204,9 @@ class DataManager
             $ids['ids'] = $this->attach_image($image->url,  $product_id);
         }
 
-
-        update_post_meta($product_id, '_product_image_gallery', implode(',', $ids['ids']));
+        if( !empty($ids)) {
+            update_post_meta($product_id, '_product_image_gallery', implode(',', $ids['ids']));
+        }
     }
 
     function attach_image ($image,  $post_id)
